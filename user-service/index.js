@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const users = [
-{ id: 1, name: "John Doe", email: "john@example.com" },
-{ id: 2, name: "Jane Smith", email: "jane@example.com" }
+{ id: 1, name: "John Doe", email: "john@example.com", AGE: 30 },
+{ id: 2, name: "Jane Smith", email: "jane@example.com", AGE: 25 }
 ];
 app.get("/users", (req, res) => res.json(users));
 app.get("/health", (req, res) => res.json({ status: "ok" }));
