@@ -1,4 +1,4 @@
-name: Microservices CI & CD
+name: Microservices CI
 
 on:
   push:
@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          
+
       - name: Check backend services
         run: |
           for dir in user-service video-service api-gateway; do
@@ -24,35 +24,12 @@ jobs:
           node --check user-service/index.js
           node --check video-service/index.js
           node --check api-gateway/app.js
-          
+
       - name: Build frontend
         run: |
           cd frontend
           npm ci
           npm run build
-          
+
       - name: Build Docker images
         run: docker compose build
-
-  publish:
-    needs: validate-and-build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Build and push services
-        env:
-          USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          for service in user-service video-service api-gateway frontend; do
-            docker build -t "$USERNAME/$service:latest" "./$service"
-            docker push "$USERNAME/$service:latest"
-          done
