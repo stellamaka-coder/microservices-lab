@@ -32,3 +32,4 @@ jobs:
       - name: Build Docker images
         run: |
           docker compose build
+EOF
